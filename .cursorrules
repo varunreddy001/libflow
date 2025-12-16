@@ -1,0 +1,23 @@
+# Cursor Rules for LibFlow Project
+
+## 1. Coding Standards
+- Use **functional components** with React Hooks.
+- Use **Tailwind CSS** for all styling. Do NOT create .css files unless absolutely necessary for global resets.
+- Use `const` over `let` whenever possible.
+- Ensure all Supabase calls are typed (use TypeScript interfaces for DB tables).
+- Handle errors gracefully using a Toast notification system, not just `console.log`.
+
+## 2. Architecture Constraints
+- **Business Logic:** Keep logic inside custom hooks (e.g., `useBooks`, `useAuth`) or service files (`/services/api.js`). Do not write complex Supabase queries directly inside UI components.
+- **Components:** Small, reusable components (Button, Input, Card) go in `/components/ui`. Page-specific layouts go in `/pages`.
+- **State:** Use React Context for global user state (`AuthContext`). Use local state for form inputs.
+
+## 3. Tech Specifics
+- **Supabase:** Use the `@supabase/supabase-js` client.
+- **Routing:** Use `react-router-dom` `createBrowserRouter` or standard `<Routes>`.
+- **Icons:** Use `lucide-react`.
+
+## 4. Error Prevention
+- Always check if `user` is null before allowing an action that requires auth.
+- When decrementing book copies, ensure the value is > 0 first.
+- Never expose Supabase Service Key in the frontend; use the Anon Key.
