@@ -44,23 +44,33 @@ export const authorService = {
   },
 
   async create(authorData: CreateAuthorData): Promise<{ author: Author | null; error?: string }> {
-    const { data, error } = await supabase
-      .from('authors')
-      .insert({
-        name: authorData.name.trim(),
-        bio: authorData.bio?.trim() || null,
-      })
-      .select()
-      .single()
+    console.log('👤 Creating author:', authorData)
+    
+    try {
+      const { data, error } = await supabase
+        .from('authors')
+        .insert({
+          name: authorData.name.trim(),
+          bio: authorData.bio?.trim() || null,
+        })
+        .select()
+        .single()
 
-    if (error) {
-      if (error.code === '23505') {
-        return { author: null, error: 'An author with this name already exists' }
+      console.log('👤 Author create response:', { data, error })
+
+      if (error) {
+        console.error('👤 Author create error:', error)
+        if (error.code === '23505') {
+          return { author: null, error: 'An author with this name already exists' }
+        }
+        return { author: null, error: error.message }
       }
-      return { author: null, error: error.message }
-    }
 
-    return { author: data }
+      return { author: data }
+    } catch (e) {
+      console.error('👤 Author create exception:', e)
+      return { author: null, error: 'An unexpected error occurred' }
+    }
   },
 
   async update(id: number, updates: UpdateAuthorData): Promise<{ success: boolean; error?: string }> {
@@ -235,29 +245,39 @@ export const bookService = {
   },
 
   async create(bookData: CreateBookData): Promise<{ book: Book | null; error?: string }> {
-    const { data, error } = await supabase
-      .from('books')
-      .insert({
-        title: bookData.title.trim(),
-        isbn: bookData.isbn.trim(),
-        author_id: bookData.author_id,
-        category_id: bookData.category_id,
-        total_copies: bookData.total_copies,
-        available_copies: bookData.total_copies, // New books start fully available
-        cover_url: bookData.cover_url?.trim() || null,
-        description: bookData.description?.trim() || null,
-      })
-      .select('*, author:authors(*), category:categories(*)')
-      .single()
+    console.log('📚 Creating book:', bookData)
+    
+    try {
+      const { data, error } = await supabase
+        .from('books')
+        .insert({
+          title: bookData.title.trim(),
+          isbn: bookData.isbn.trim(),
+          author_id: bookData.author_id,
+          category_id: bookData.category_id,
+          total_copies: bookData.total_copies,
+          available_copies: bookData.total_copies, // New books start fully available
+          cover_url: bookData.cover_url?.trim() || null,
+          description: bookData.description?.trim() || null,
+        })
+        .select('*, author:authors(*), category:categories(*)')
+        .single()
 
-    if (error) {
-      if (error.code === '23505') {
-        return { book: null, error: 'A book with this ISBN already exists' }
+      console.log('📚 Book create response:', { data, error })
+
+      if (error) {
+        console.error('📚 Book create error:', error)
+        if (error.code === '23505') {
+          return { book: null, error: 'A book with this ISBN already exists' }
+        }
+        return { book: null, error: error.message }
       }
-      return { book: null, error: error.message }
-    }
 
-    return { book: data }
+      return { book: data }
+    } catch (e) {
+      console.error('📚 Book create exception:', e)
+      return { book: null, error: 'An unexpected error occurred' }
+    }
   },
 
   async update(id: string, updates: UpdateBookData): Promise<{ success: boolean; error?: string }> {

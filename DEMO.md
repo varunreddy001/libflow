@@ -9,10 +9,10 @@ This guide helps you set up demo data to showcase all LibFlow features.
 In Supabase SQL Editor, run these in order:
 ```
 supabase/migrations/001_initial_schema.sql
-supabase/migrations/003_fix_rls_complete.sql
+supabase/migrations/004_fix_rls_final.sql
 ```
 
-> **Note:** If you already ran 002, just run 003 instead - it's a complete replacement.
+> **Note:** If you've run previous migrations, just run 004 - it drops and recreates all RLS policies correctly.
 
 ### 2. Seed Demo Data
 

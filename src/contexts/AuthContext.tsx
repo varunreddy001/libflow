@@ -28,14 +28,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { addToast } = useToast()
 
   const fetchProfile = useCallback(async (userId: string) => {
-    const { profile, error } = await authService.getProfile(userId)
-    
-    if (error) {
-      // Don't show error toast for missing profile - it may be creating
-      console.error('Error fetching profile:', error)
+    try {
+      // Add timeout to prevent infinite hang from RLS issues
+      const timeoutPromise = new Promise<{ profile: null; error: string }>((_, reject) => 
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 5000)
+      )
+      
+      const fetchPromise = authService.getProfile(userId)
+      
+      const { profile, error } = await Promise.race([fetchPromise, timeoutPromise])
+      
+      if (error) {
+        console.error('Error fetching profile:', error)
+      }
+      
+      return profile
+    } catch (e) {
+      console.error('Profile fetch failed:', e)
+      return null
     }
-    
-    return profile
   }, [])
 
   const refreshProfile = useCallback(async () => {
